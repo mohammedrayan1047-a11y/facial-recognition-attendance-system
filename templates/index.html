@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition Attendance System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        .features {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .feature {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f7f7f7;
+            border-radius: 5px;
+        }
+        .feature h3 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Face Recognition Attendance System</h1>
+        <p class="subtitle">Smart attendance management for educational institutions</p>
+        
+        <a href="/login" class="btn btn-primary">Login to System</a>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>✅ Automated Attendance</h3>
+                <p>Mark attendance automatically using facial recognition technology</p>
+            </div>
+            <div class="feature">
+                <h3>📊 Monthly Reports</h3>
+                <p>Generate detailed attendance reports with percentages</p>
+            </div>
+            <div class="feature">
+                <h3>📁 Export Data</h3>
+                <p>Export attendance records to Excel for further analysis</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

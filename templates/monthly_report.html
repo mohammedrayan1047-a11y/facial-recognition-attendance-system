@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Report - Attendance System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .report-header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .report-header h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .report-header p {
+            color: #666;
+        }
+        .stats-table {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .percentage {
+            font-weight: bold;
+        }
+        .high {
+            color: green;
+        }
+        .medium {
+            color: orange;
+        }
+        .low {
+            color: red;
+        }
+        .summary {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>Face Attendance System</h2>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/register_student">Register Student</a>
+            <a href="/mark_attendance">Mark Attendance</a>
+            <a href="/view_attendance">View Reports</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="report-header">
+            <h2>📅 Monthly Attendance Report</h2>
+            <p>{{ month }}/{{ year }} | Total Students: {{ monthly_stats|length }}</p>
+        </div>
+        
+        <div class="stats-table">
+            <h3>Student-wise Attendance Summary</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Total Working Days</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Attendance %</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stat in monthly_stats %}
+                    <tr>
+                        <td>{{ stat.student_id }}</td>
+                        <td>{{ stat.name }}</td>
+                        <td>{{ stat.total_days }}</td>
+                        <td>{{ stat.present_days }}</td>
+                        <td>{{ stat.absent_days }}</td>
+                        <td class="percentage {% if stat.percentage >= 75 %}high{% elif stat.percentage >= 50 %}medium{% else %}low{% endif %}">
+                            {{ stat.percentage }}%
+                        </td>
+                        <td>
+                            {% if stat.percentage >= 75 %}
+                            ✅ Good
+                            {% elif stat.percentage >= 50 %}
+                            ⚠️ Satisfactory
+                            {% else %}
+                            ❌ Needs Improvement
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7">No data available for this month</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="summary">
+            <h3>📊 Summary Statistics</h3>
+            {% set total_students = monthly_stats|length %}
+            {% set students_above_75 = monthly_stats|selectattr('percentage', '>=', 75)|list|length %}
+            {% set students_below_75 = monthly_stats|selectattr('percentage', '<', 75)|list|length %}
+            {% set avg_attendance = (monthly_stats|map(attribute='percentage')|sum / total_students)|round(2) if total_students > 0 else 0 %}
+            
+            <p><strong>Total Students:</strong> {{ total_students }}</p>
+            <p><strong>Students with ≥75% Attendance:</strong> {{ students_above_75 }} ({{ "%.1f"|format(students_above_75/total_students*100 if total_students>0 else 0) }}%)</p>
+            <p><strong>Students with &lt;75% Attendance:</strong> {{ students_below_75 }} ({{ "%.1f"|format(students_below_75/total_students*100 if total_students>0 else 0) }}%)</p>
+            <p><strong>Average Attendance Rate:</strong> {{ avg_attendance }}%</p>
+            
+            <a href="/export_attendance" class="btn">📥 Export Full Report</a>
+        </div>
+    </div>
+</body>
+</html>

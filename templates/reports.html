@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Attendance - Attendance System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 5px 10px;
+        }
+        .nav-links a:hover {
+            background: #34495e;
+            border-radius: 5px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 500;
+        }
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .btn {
+            padding: 8px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #5a67d8;
+        }
+        .stats-summary {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .stat {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .stat .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat .label {
+            color: #666;
+            margin-top: 5px;
+        }
+        .attendance-table, .student-stats {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .present {
+            color: green;
+            font-weight: bold;
+        }
+        .absent {
+            color: red;
+        }
+        .export-btn {
+            background: #28a745;
+            margin-top: 20px;
+        }
+        .export-btn:hover {
+            background: #218838;
+        }
+        .percentage {
+            font-weight: bold;
+        }
+        .high {
+            color: green;
+        }
+        .medium {
+            color: orange;
+        }
+        .low {
+            color: red;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>Face Attendance System</h2>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/register_student">Register Student</a>
+            <a href="/mark_attendance">Mark Attendance</a>
+            <a href="/view_attendance">View Reports</a>
+            <a href="/monthly_report">Monthly Report</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>📊 Attendance Reports</h2>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <label>Filter by Course</label>
+                <select id="courseFilter" onchange="applyFilters()">
+                    <option value="">All Courses</option>
+                    {% for course in courses %}
+                    <option value="{{ course.id }}" {% if request.args.get('course_id') == course.id|string %}selected{% endif %}>
+                        {{ course.course_code }} - {{ course.course_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Month</label>
+                <select id="monthFilter" onchange="applyFilters()">
+                    <option value="">All Months</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Year</label>
+                <input type="number" id="yearFilter" value="{{ request.args.get('year', '2024') }}" onchange="applyFilters()">
+            </div>
+            <div class="filter-group">
+                <button class="btn" onclick="resetFilters()">Reset Filters</button>
+            </div>
+        </div>
+        
+        <div class="stats-summary">
+            <div class="stat">
+                <div class="number">{{ total_records }}</div>
+                <div class="label">Total Records</div>
+            </div>
+            <div class="stat">
+                <div class="number">{{ present_count }}</div>
+                <div class="label">Present</div>
+            </div>
+            <div class="stat">
+                <div class="number">{{ total_records - present_count }}</div>
+                <div class="label">Absent</div>
+            </div>
+            <div class="stat">
+                <div class="number">{{ "%.1f"|format((present_count/total_records*100) if total_records>0 else 0) }}%</div>
+                <div class="label">Attendance Rate</div>
+            </div>
+        </div>
+        
+        {% if student_stats|length > 0 %}
+        <div class="student-stats">
+            <h3>📈 Student Attendance Summary</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Total Classes</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student_id, stats in student_stats.items() %}
+                    <tr>
+                        <td>{{ student_id }}</td>
+                        <td>{{ stats.name }}</td>
+                        <td>{{ stats.total }}</td>
+                        <td>{{ stats.present }}</td>
+                        <td>{{ stats.total - stats.present }}</td>
+                        <td class="percentage {% if stats.percentage >= 75 %}high{% elif stats.percentage >= 50 %}medium{% else %}low{% endif %}">
+                            {{ "%.2f"|format(stats.percentage) }}%
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="attendance-table">
+            <h3>📋 Detailed Attendance Records</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Course</th>
+                        <th>Status</th>
+                        <th>Time</th>
+                        <th>Marked By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in attendance_records %}
+                    <tr>
+                        <td>{{ record.date }}</td>
+                        <td>{{ record.student.student_id }}</td>
+                        <td>{{ record.student.name }}</td>
+                        <td>{{ record.course.course_name }}</td>
+                        <td class="{% if record.status == 'present' %}present{% else %}absent{% endif %}">
+                            {{ record.status|upper }}
+                        </td>
+                        <td>{{ record.time_in }}</td>
+                        <td>{{ record.marked_by }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="student-stats">
+            <div class="no-data">
+                <h3>📭 No Attendance Records Found</h3>
+                <p>No attendance data available for the selected filters.</p>
+                <p>Try:</p>
+                <ul style="text-align: left; display: inline-block; margin-top: 10px;">
+                    <li>📸 Marking attendance first using the "Mark Attendance" tab</li>
+                    <li>🔍 Changing the filters to see different time periods</li>
+                    <li>👥 Registering students if none exist</li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div style="text-align: center;">
+            <a href="/export_attendance" class="btn export-btn">📥 Export to Excel</a>
+        </div>
+    </div>
+    
+    <script>
+        function applyFilters() {
+            const course = document.getElementById('courseFilter').value;
+            const month = document.getElementById('monthFilter').value;
+            const year = document.getElementById('yearFilter').value;
+            
+            let url = '/view_attendance?';
+            if (course) url += `course_id=${course}&`;
+            if (month) url += `month=${month}&`;
+            if (year) url += `year=${year}`;
+            
+            window.location.href = url;
+        }
+        
+        function resetFilters() {
+            window.location.href = '/view_attendance';
+        }
+    </script>
+</body>
+</html>
