@@ -1,6 +1,7 @@
 Flask==2.3.0
 Flask-SQLAlchemy==3.0.0
-opencv-python==4.13.0.92face_recognition==1.3.0
+opencv-python==4.13.0.92
+face_recognition==1.3.0
 numpy==1.24.0
 Pillow==10.0.0
 python-dotenv==1.0.0
