@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code...'
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Installing Python dependencies...'
+                bat 'python -m pip install -r requirements.txt'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running Python syntax check...'
+                bat 'python -m compileall app.py database.py face_utils.py'
+            }
+        }
+
+        stage('CI Success') {
+            steps {
+                echo 'Facial Recognition Attendance System CI build completed successfully!'
+            }
+        }
+    }
+}
