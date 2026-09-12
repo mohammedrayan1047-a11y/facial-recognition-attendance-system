@@ -61,7 +61,7 @@ class Attendance(db.Model):
 # Create tables and add courses
 with app.app_context():
     db.create_all()
-    print("✅ Database created successfully!")
+    print("Database created successfully!")
     
     # Add all courses if none exist
     if Course.query.count() == 0:
@@ -83,7 +83,7 @@ with app.app_context():
             db.session.add(course)
         
         db.session.commit()
-        print(f"✅ {len(all_courses)} courses created successfully!")
+        print(f"{len(all_courses)} courses created successfully!")
 
 def capture_face_images():
     """Capture multiple face images from camera"""
@@ -130,9 +130,9 @@ def capture_face_images():
                 face_resized = cv2.resize(face_roi, (100, 100))
                 face_images.append(face_resized)
                 count += 1
-                print(f"✅ Captured image {count}/20")
+                print(f"Captured image {count}/20")
             else:
-                print("❌ No face detected! Please look directly at camera.")
+                print("No face detected! Please look directly at camera.")
         
         elif key == 27:  # ESC key
             break
@@ -143,7 +143,7 @@ def capture_face_images():
     if len(face_images) < 10:
         return None, f"Only captured {len(face_images)} images. Need at least 10 for good recognition."
     
-    print(f"\n✅ Successfully captured {len(face_images)} face images!")
+    print(f"\nSuccessfully captured {len(face_images)} face images!")
     return face_images, "Success"
 
 def mark_attendance_with_camera():
@@ -177,7 +177,7 @@ def mark_attendance_with_camera():
     recognizer.train(faces, np.array(labels))
     
     print("\n" + "="*50)
-    print("📸 ATTENDANCE MARKING")
+    print("ATTENDANCE MARKING")
     print("="*50)
     print("Please position faces in front of camera")
     print("Press SPACE to capture and mark attendance")
@@ -310,7 +310,7 @@ def register_student():
         try:
             db.session.add(student)
             db.session.commit()
-            flash(f'✅ Student {name} registered successfully with {len(face_images)} face images!', 'success')
+            flash(f'Student {name} registered successfully with {len(face_images)} face images!', 'success')
         except Exception as e:
             db.session.rollback()
             flash(f'Error: {str(e)}', 'error')
@@ -377,9 +377,9 @@ def mark_attendance():
         db.session.commit()
         
         if marked_count > 0:
-            flash(f'✅ Attendance marked for {marked_count} students in {course.course_name}!', 'success')
+            flash(f'Attendance marked for {marked_count} students in {course.course_name}!', 'success')
         else:
-            flash('⚠️ No new attendance marked. Students may have already been marked today.', 'warning')
+            flash('No new attendance marked. Students may have already been marked today.', 'warning')
         
         return redirect(url_for('dashboard'))
     
@@ -534,12 +534,12 @@ if __name__ == '__main__':
     print("\n" + "="*60)
     print("🎯 FACE RECOGNITION ATTENDANCE SYSTEM")
     print("="*60)
-    print("\n✅ System starting...")
-    print("🌐 Access the application at: http://127.0.0.1:5000")
-    print("\n📝 Default Login:")
+    print("\nSystem starting...")
+    print("Access the application at: http://127.0.0.1:5000")
+    print("\nDefault Login:")
     print("   Username: admin")
     print("   Password: admin123")
-    print("\n📚 Available Courses:")
+    print("\nAvailable Courses:")
     print("   1. CS101 - Introduction to Programming")
     print("   2. CS201 - Data Structures")
     print("   3. MA101 - Mathematics")
@@ -549,7 +549,7 @@ if __name__ == '__main__':
     print("   7. CS302 - Software Engineering")
     print("   8. CS303 - Operating Systems")
     print("   9. CS304 - Database Management Systems")
-    print("\n⚠️  Important Notes:")
+    print("\n Important Notes:")
     print("   1. Make sure your camera is connected")
     print("   2. Register students first with their face")
     print("   3. Good lighting improves face recognition")
