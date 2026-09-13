@@ -31,11 +31,9 @@ pipeline {
 
                 bat '.venv\\Scripts\\python.exe -m compileall app.py database.py face_utils.py'
 
-
                 echo 'Testing dependencies...'
 
                 bat '.venv\\Scripts\\python.exe -c "import cv2, numpy, pandas, openpyxl, flask, flask_sqlalchemy; print(chr(65)+chr(108)+chr(108)+chr(32)+chr(100)+chr(101)+chr(112)+chr(101)+chr(110)+chr(100)+chr(101)+chr(110)+chr(99)+chr(105)+chr(101)+chr(115)+chr(32)+chr(105)+chr(109)+chr(112)+chr(111)+chr(114)+chr(116)+chr(101)+chr(100)+chr(32)+chr(115)+chr(117)+chr(99)+chr(99)+chr(101)+chr(115)+chr(115)+chr(102)+chr(117)+chr(108)+chr(108)+chr(121))"'
-
 
                 echo 'Testing Flask application...'
 
@@ -64,7 +62,7 @@ pipeline {
 
                 bat 'xcopy /E /I /Y templates deployed\\templates'
 
-                bat 'xcopy /E /I /Y static deployed\\static'
+                bat 'if exist static xcopy /E /I /Y static deployed\\static'
 
                 echo 'Flask application deployed successfully!'
             }
